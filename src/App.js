@@ -25,6 +25,10 @@ export default function App() {
     setSeconds(0);
     setMinutes(minute => minute + 1);
   }
+  if (bestScore.time > 59) {
+    setSeconds(0);
+    setMinutes(minute => minute + 1);
+  }
   if (minutes > 59) {
     setMinutes(0);
     setHours(hour => hour + 1);
@@ -36,26 +40,23 @@ export default function App() {
   }
 
   function defaultGameState() {
-    return { tenzies: false, rolls: 0, time: 0 };
+    return { tenzies: false, rolls: 0 };
   }
 
   useEffect(() => {
     if (gameState.tenzies) {
       if (bestScore.rolls === null) {
         setBestScore(prevBest => {
-          return { ...prevBest, rolls: gameState.rolls, time: gameState.time };
+          return { ...prevBest, rolls: gameState.rolls, time: seconds };
         });
       }
-      if (
-        gameState.rolls < bestScore.rolls ||
-        gameState.time < bestScore.time
-      ) {
+      if (gameState.rolls < bestScore.rolls || seconds < bestScore.time) {
         setBestScore(prevBest => {
-          return { ...prevBest, rolls: gameState.rolls, time: gameState.time };
+          return { ...prevBest, rolls: gameState.rolls, time: seconds };
         });
       }
     }
-  }, [gameState, bestScore]);
+  }, [seconds, gameState, bestScore]);
 
   useEffect(() => {
     localStorage.setItem('tenziesBestScore', JSON.stringify(bestScore));
@@ -159,6 +160,12 @@ export default function App() {
         :{String(seconds).padStart(2, '0')}
       </p>
       <p>{gameState.rolls} rolls</p>
+      <p>
+        Best Scores: <br />
+        {bestScore.rolls === null ? '0' : bestScore.rolls} rolls Time{' '}
+        {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:
+        {String(bestScore.time).padStart(2, '0')}
+      </p>
       <button onClick={changeDiceFace}>
         Show {showNumbers ? 'Dice' : 'Numbers'}
       </button>
