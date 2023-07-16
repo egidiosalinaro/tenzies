@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const DiceFace = styled.span`
   display: block;
-  transform: scale(var(--ggs, 2.3));
+  transform: scale(var(--ggs, 2.6));
   position: relative;
   box-sizing: border-box;
   width: 22px;

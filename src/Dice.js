@@ -2,7 +2,7 @@ import { DiceFace } from './diceStyle';
 
 export default function Dice(props) {
   const styles = {
-    backgroundColor: props.isHeld ? '#59E391' : 'white',
+    backgroundColor: props.isHeld ? '#43aa8b' : 'white',
   };
 
   return (

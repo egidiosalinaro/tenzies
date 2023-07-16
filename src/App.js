@@ -150,22 +150,24 @@ export default function App() {
   return (
     <main>
       {gameState.tenzies && <Confetti />}
-      <h1 className="title">Tenzies</h1>
-      <p className="instructions">
-        Roll until all dice are the same. <br /> Click each die to freeze it at
-        its current value between rolls.
-      </p>
-      <p>
-        Time {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}
-        :{String(seconds).padStart(2, '0')}
-      </p>
-      <p>{gameState.rolls} rolls</p>
-      <p>
-        Best Scores: <br />
-        {bestScore.rolls === null ? '0' : bestScore.rolls} rolls Time{' '}
-        {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:
-        {String(bestScore.time).padStart(2, '0')}
-      </p>
+      <div className="head">
+        <h1>Tenzies</h1>
+        <h6>by Egidio Salinaro</h6>
+      </div>
+      <div className="scores">
+        <p className="current">
+          <b>Scores</b> <br />
+          {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:
+          {String(seconds).padStart(2, '0')} <br />
+          rolls {gameState.rolls}
+        </p>
+        <p className="best">
+          <b>Best</b> <br /> {String(hours).padStart(2, '0')}:
+          {String(minutes).padStart(2, '0')}:
+          {String(bestScore.time).padStart(2, '0')} <br /> rolls{' '}
+          {bestScore.rolls === null ? '0' : bestScore.rolls}
+        </p>
+      </div>
       <button onClick={changeDiceFace}>
         Show {showNumbers ? 'Dice' : 'Numbers'}
       </button>
@@ -173,6 +175,10 @@ export default function App() {
       <button className="roll-dice" onClick={rollDice}>
         {gameState.tenzies ? 'New Game' : 'Roll'}
       </button>
+      <p className="instructions">
+        <b>HOW TO PLAY:</b> Roll until all dice are the same. <br /> Click each
+        die to <b>freeze</b> it at its current value between rolls.
+      </p>
     </main>
   );
 }
