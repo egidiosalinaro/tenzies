@@ -46,7 +46,7 @@ The goal of the project is to deliver a fun game application for every dice pass
   
 At its startup the application displays the title, current score and best score, dice to play with, a button to change the view from dice faces to simple arabic numbers, a button to roll dice and to start a new game, instructions.
 
-Dice numbers are randomly picked using `Math.random` and the `nanoid` library in the `generateNewDice` function. Once a random number from 1 to 6 is picked, it is displayed if the State `showNumbers` is true (it changes via the `changeDiceFace` function called clicking the relative button), otherwise a die face is showed relative to that number using the conditional styling regarding the `box-shadow` property (you can find the conditional styling in `./src/components/dice/diceStyle.js`).
+Dice numbers are randomly picked using `Math.random` and the `nanoid` library in the `generateNewDice` function. Once a random number from 1 to 6 is picked, it is displayed if the State `showNumbers` is true (it changes via the `changeDiceFace` function called clicking the relevant button), otherwise a die face is showed with dots corresponding to that number, using conditional styling on the `box-shadow` property (you can find the conditional styling in `./src/components/dice/diceStyle.js`).
 
 Timer starts whether the user holds a die for the first time or presses the roll button (see `holdDice` and `rollDice` functions).
 By clicking on a die, the user changes the `isHeld` prop of the `Dice` component, preventing it to roll when the roll button is clicked (as developed in the `rollDice` function.
