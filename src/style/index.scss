@@ -1,47 +1,17 @@
-$color-one: #cb997e;
-$color-two: #eddcd2;
-$color-three: #fff1e6;
-$color-four: #f0efeb;
-$color-five: #ddbea9;
-$color-six: #a5a58d;
-$color-seven: #b7b7a4;
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background-color: $color-six;
-  padding: 40px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Karla', sans-serif;
-}
-
-main {
-  background-color: $color-four;
-  height: 70vh;
-  border-radius: 5px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-}
+@import 'palette';
+@import 'general';
 
 .head {
   text-align: center;
-}
 
-h1 {
-  font-size: 40px;
-  margin: 0;
-}
+  h1 {
+    font-size: 40px;
+    margin: 0;
+  }
 
-h6 {
-  margin: 0;
+  h6 {
+    margin: 0;
+  }
 }
 
 .scores {
@@ -70,6 +40,7 @@ h6 {
   padding-top: 10px;
   font-family: 'Inter', sans-serif;
   font-weight: 400;
+  font-size: 0.9rem;
   text-align: center;
 
   b {
