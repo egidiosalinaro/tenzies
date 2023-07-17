@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import Dice from './Dice';
+import Dice from './components/dice/Dice';
 import { nanoid } from 'nanoid';
 import Confetti from 'react-confetti';
 
 export default function App() {
+  // game States
   const [dice, setDice] = useState(allNewDice());
   const [gameState, setGameState] = useState(defaultGameState());
   const [start, setStart] = useState(false);
-
-  const [showNumbers, setShowNumbers] = useState(false);
-
-  const [seconds, setSeconds] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [hours, setHours] = useState(0);
-
   const [bestScore, setBestScore] = useState(
     JSON.parse(localStorage.getItem('tenziesBestScore')) || {
       rolls: null,
       time: 0,
     }
   );
+
+  // State for visualizing numbers/dice
+  const [showNumbers, setShowNumbers] = useState(false);
+
+  // time States and mappers
+  const [seconds, setSeconds] = useState(0);
+  const [minutes, setMinutes] = useState(0);
 
   if (seconds > 59) {
     setSeconds(0);
@@ -31,18 +32,13 @@ export default function App() {
   }
   if (minutes > 59) {
     setMinutes(0);
-    setHours(hour => hour + 1);
-  }
-  if (hours > 23) {
-    setSeconds(0);
-    setMinutes(0);
-    setHours(0);
   }
 
   function defaultGameState() {
     return { tenzies: false, rolls: 0 };
   }
 
+  // setting best score
   useEffect(() => {
     if (gameState.tenzies) {
       if (bestScore.rolls === null) {
@@ -58,10 +54,12 @@ export default function App() {
     }
   }, [seconds, gameState, bestScore]);
 
+  // saving recorded best score in local storage
   useEffect(() => {
     localStorage.setItem('tenziesBestScore', JSON.stringify(bestScore));
   }, [bestScore]);
 
+  // starting timer
   useEffect(() => {
     let timer = setInterval(() => {
       if (!start) {
@@ -76,17 +74,7 @@ export default function App() {
     return () => clearInterval(timer);
   }, [start, gameState.tenzies]);
 
-  useEffect(() => {
-    const allHeld = dice.every(dice => dice.isHeld);
-    const firstValue = dice[0].value;
-    const allSameValue = dice.every(dice => dice.value === firstValue);
-    if (allHeld && allSameValue) {
-      setGameState(prev => {
-        return { ...prev, tenzies: true };
-      });
-    }
-  }, [dice]);
-
+  // generating random dice when not held
   function generateNewDice() {
     return {
       value: Math.ceil(Math.random() * 6),
@@ -103,6 +91,19 @@ export default function App() {
     return newDice;
   }
 
+  // setting winning conditions
+  useEffect(() => {
+    const allHeld = dice.every(dice => dice.isHeld);
+    const firstValue = dice[0].value;
+    const allSameValue = dice.every(dice => dice.value === firstValue);
+    if (allHeld && allSameValue) {
+      setGameState(prev => {
+        return { ...prev, tenzies: true };
+      });
+    }
+  }, [dice]);
+
+  // main button serving as roll or new game
   function rollDice() {
     if (!gameState.tenzies) {
       !start && setStart(!start);
@@ -118,16 +119,17 @@ export default function App() {
       setStart(false);
       setSeconds(0);
       setMinutes(0);
-      setHours(0);
       setGameState(defaultGameState());
       setDice(allNewDice());
     }
   }
 
+  // secondary button used to show numbers or dice
   function changeDiceFace() {
     setShowNumbers(!showNumbers);
   }
 
+  // function to hold dice
   function holdDice(id) {
     !start && setStart(!start);
     setDice(oldDice =>
@@ -156,13 +158,13 @@ export default function App() {
       </div>
       <div className="scores">
         <p className="current">
-          <b>Scores</b> <br />
-          {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:
-          {String(seconds).padStart(2, '0')} <br />
+          <b>Score</b> <br />
+          {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}{' '}
+          <br />
           rolls {gameState.rolls}
         </p>
         <p className="best">
-          <b>Best</b> <br /> {String(hours).padStart(2, '0')}:
+          <b>Best</b> <br />
           {String(minutes).padStart(2, '0')}:
           {String(bestScore.time).padStart(2, '0')} <br /> rolls{' '}
           {bestScore.rolls === null ? '0' : bestScore.rolls}
