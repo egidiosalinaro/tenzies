@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import Dice from './components/dice/Dice';
-import { nanoid } from 'nanoid';
-import Confetti from 'react-confetti';
+import React, { useState, useEffect } from "react";
+import { nanoid } from "nanoid";
+import Confetti from "react-confetti";
+import { useCookies } from "react-cookie";
+
+import Dice from "./components/dice/Dice";
+import CookieConsent from "./components/cookies/CookieConsent";
 
 export default function App() {
+  // cookie consent modal
+  const [cookies] = useCookies(["cookieConsent"]);
+
   // game States
   const [dice, setDice] = useState(allNewDice());
   const [gameState, setGameState] = useState(defaultGameState());
   const [start, setStart] = useState(false);
   const [bestScore, setBestScore] = useState(
-    JSON.parse(localStorage.getItem('tenziesBestScore')) || {
+    JSON.parse(localStorage.getItem("tenziesBestScore")) || {
       rolls: null,
       time: 0,
     }
@@ -24,11 +30,11 @@ export default function App() {
 
   if (seconds > 59) {
     setSeconds(0);
-    setMinutes(minute => minute + 1);
+    setMinutes((minute) => minute + 1);
   }
   if (bestScore.time > 59) {
     setSeconds(0);
-    setMinutes(minute => minute + 1);
+    setMinutes((minute) => minute + 1);
   }
   if (minutes > 59) {
     setMinutes(0);
@@ -42,12 +48,12 @@ export default function App() {
   useEffect(() => {
     if (gameState.tenzies) {
       if (bestScore.rolls === null) {
-        setBestScore(prevBest => {
+        setBestScore((prevBest) => {
           return { ...prevBest, rolls: gameState.rolls, time: seconds };
         });
       }
       if (gameState.rolls < bestScore.rolls || seconds < bestScore.time) {
-        setBestScore(prevBest => {
+        setBestScore((prevBest) => {
           return { ...prevBest, rolls: gameState.rolls, time: seconds };
         });
       }
@@ -56,7 +62,7 @@ export default function App() {
 
   // saving recorded best score in local storage
   useEffect(() => {
-    localStorage.setItem('tenziesBestScore', JSON.stringify(bestScore));
+    localStorage.setItem("tenziesBestScore", JSON.stringify(bestScore));
   }, [bestScore]);
 
   // starting timer
@@ -68,7 +74,7 @@ export default function App() {
       if (gameState.tenzies) {
         return;
       }
-      setSeconds(second => second + 1);
+      setSeconds((second) => second + 1);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -93,11 +99,11 @@ export default function App() {
 
   // setting winning conditions
   useEffect(() => {
-    const allHeld = dice.every(dice => dice.isHeld);
+    const allHeld = dice.every((dice) => dice.isHeld);
     const firstValue = dice[0].value;
-    const allSameValue = dice.every(dice => dice.value === firstValue);
+    const allSameValue = dice.every((dice) => dice.value === firstValue);
     if (allHeld && allSameValue) {
-      setGameState(prev => {
+      setGameState((prev) => {
         return { ...prev, tenzies: true };
       });
     }
@@ -105,13 +111,13 @@ export default function App() {
 
   // main button serving as roll or new game
   function rollDice() {
-    if (!gameState.tenzies) {
+    if (!gameState.tenzies && cookies.cookieConsent) {
       !start && setStart(!start);
-      setGameState(prev => {
+      setGameState((prev) => {
         return { ...prev, rolls: prev.rolls + 1 };
       });
-      setDice(oldDice =>
-        oldDice.map(dice => {
+      setDice((oldDice) =>
+        oldDice.map((dice) => {
           return dice.isHeld ? dice : generateNewDice();
         })
       );
@@ -131,15 +137,15 @@ export default function App() {
 
   // function to hold dice
   function holdDice(id) {
-    !start && setStart(!start);
-    setDice(oldDice =>
-      oldDice.map(dice => {
+    cookies.cookieConsent && !start && setStart(!start);
+    setDice((oldDice) =>
+      oldDice.map((dice) => {
         return dice.id === id ? { ...dice, isHeld: !dice.isHeld } : dice;
       })
     );
   }
 
-  const diceElements = dice.map(dice => (
+  const diceElements = dice.map((dice) => (
     <Dice
       key={dice.id}
       value={dice.value}
@@ -159,28 +165,29 @@ export default function App() {
       <div className="scores">
         <p className="current">
           <b>Score</b> <br />
-          {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}{' '}
+          {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}{" "}
           <br />
           rolls {gameState.rolls}
         </p>
         <p className="best">
           <b>Best</b> <br />
-          {String(minutes).padStart(2, '0')}:
-          {String(bestScore.time).padStart(2, '0')} <br /> rolls{' '}
-          {bestScore.rolls === null ? '0' : bestScore.rolls}
+          {String(minutes).padStart(2, "0")}:
+          {String(bestScore.time).padStart(2, "0")} <br /> rolls{" "}
+          {bestScore.rolls === null ? "0" : bestScore.rolls}
         </p>
       </div>
       <button onClick={changeDiceFace}>
-        Show {showNumbers ? 'Dice' : 'Numbers'}
+        Show {showNumbers ? "Dice" : "Numbers"}
       </button>
       <div className="dice-container">{diceElements}</div>
       <button className="roll-dice" onClick={rollDice}>
-        {gameState.tenzies ? 'New Game' : 'Roll'}
+        {gameState.tenzies ? "New Game" : "Roll"}
       </button>
       <p className="instructions">
         <b>HOW TO PLAY:</b> Roll until all dice are the same. <br /> Click each
         die to <b>freeze</b> it at its current value between rolls.
       </p>
+      {!cookies.cookieConsent && <CookieConsent />}
     </main>
   );
 }
